@@ -321,6 +321,12 @@ Where to put the mapper initialization code depends on the framework and our pre
 For Rails the canonical place to start our mapper is within nanite.rb (or any other filename you prefer) in config/initalizers.
 In Merb we can use init.rb in config.
 
+== Tests
+
+Using autotest with rspec2:
+
+autotest -s rspec2
+
 == Security
 
 Nanite implements a secure serializer which can be used in place of the other serializers to encrypt the 
