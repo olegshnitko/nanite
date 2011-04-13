@@ -41,6 +41,6 @@ class Simple
   end
 
   def gems(filter)
-    ::Gem.source_index.refresh!.search(filter).flatten.collect {|gemspec| "#{gemspec.name} #{gemspec.version}"}  
+    ::Gem.source_index.refresh!.find_name(filter).flatten.collect {|gemspec| "#{gemspec.name} #{gemspec.version}"}  
   end
 end
