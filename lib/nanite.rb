@@ -1,6 +1,5 @@
 require 'rubygems'
 require 'amqp'
-require 'mq'
 require 'json'
 require 'logger'
 require 'yaml'

@@ -4,7 +4,7 @@ describe "Agent:" do
 
   describe "Default Option" do
 
-    before(:all) do
+    before(:each) do
       EM.stub!(:add_periodic_timer)
       AMQP.stub!(:connect)
       @amq = mock("AMQueue", :queue => mock("queue", :subscribe => {}), :fanout => mock("fanout", :publish => nil))

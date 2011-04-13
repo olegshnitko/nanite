@@ -38,7 +38,7 @@ end
 # Exchange objects. This allows us to send messeages to exchanges that are
 # declared by the mappers and that we have no configuration priviledges on.
 # temporary until we get this into amqp proper
-MQ::Exchange.class_eval do
+AMQP::Exchange.class_eval do
   def initialize(mq, type, name, opts = {})
     @mq = mq
     @type, @name, @opts = type, name, opts

@@ -5,24 +5,18 @@ describe Nanite::Serializer do
   describe "Format" do
 
     it "supports JSON format" do
-      [ :json, "json" ].each do |format|
-        serializer = Nanite::Serializer.new(format)
-        serializer.instance_eval { @serializers.first }.should == JSON
-      end
+      serializer = Nanite::Serializer.new(:json)
+      serializer.instance_eval { @serializers.first }.should == JSON
     end
 
     it "supports Marshal format" do
-      [ :marshal, "marshal" ].each do |format|
-        serializer = Nanite::Serializer.new(format)
-        serializer.instance_eval { @serializers.first }.should == Marshal
-      end
+      serializer = Nanite::Serializer.new(:marshal)
+      serializer.instance_eval { @serializers.first }.should == Marshal
     end
 
     it "supports YAML format" do
-      [ :yaml, "yaml" ].each do |format|
-        serializer = Nanite::Serializer.new(format)
-        serializer.instance_eval { @serializers.first }.should == YAML
-      end
+      serializer = Nanite::Serializer.new(:yaml)
+      serializer.instance_eval { @serializers.first }.should == YAML
     end
 
     it "should default to Marshal format if not specified" do
@@ -74,8 +68,8 @@ describe Nanite::Serializer do
       end
       
       it "should override the preferred format and use an insecure one when asked for" do
-        JSON.should_receive(:dump).with("packet").and_return(@packet)
-        @serializer.dump("packet", :insecure).should == 'serialized'
+        serialized = @serializer.dump(@packet, :insecure)
+        @serializer.load(serialized, :insecure).should == 'serialized'
       end
       
       it "should use the secure serializer if no special format was given" do
