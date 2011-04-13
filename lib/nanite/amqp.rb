@@ -7,7 +7,7 @@ class MQ
       @mq = mq
       @opts = opts
       @bindings ||= {}
-      @mq.queues[@name = name] ||= self
+      @mq.queues << self if @mq.queues.empty?
       @mq.callback{
       @mq.send Protocol::Queue::Declare.new({ :queue => name,
                                               :nowait => true }.merge(opts))
