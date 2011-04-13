@@ -297,7 +297,7 @@ describe Nanite::Cluster do
 
     it "should save the timestamp that the nanite was updated" do
       @cluster.register(@register_packet)
-      @cluster.nanites['nanite_id'][:timestamp].should be_close(Time.now.utc.to_i, 1)
+      @cluster.nanites['nanite_id'][:timestamp].should be_within(1).of(Time.now.utc.to_i)
     end
     
     describe "with registered callbacks" do
@@ -612,7 +612,7 @@ describe Nanite::Cluster do
         cluster.reaper.should_receive(:update).with("nanite_id", 33)
         cluster.nanites["nanite_id"] = {:status => "nanite_status"}
         cluster.send :handle_ping, @ping
-        cluster.nanites["nanite_id"][:timestamp].should be_close(Time.now.utc.to_i, 1)
+        cluster.nanites["nanite_id"][:timestamp].should be_within(1).of(Time.now.utc.to_i)
       end
     end
     

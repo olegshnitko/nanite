@@ -125,7 +125,7 @@ describe "Nanite::LocalState: " do
     it "should store the timestamp for the nanite" do
       state = Nanite::LocalState.new('a' => { :services => "service" })
       state.update_status('a', 0.1)
-      state['a'][:timestamp].should be_close(Time.now.utc.to_i, 1)
+      state['a'][:timestamp].should be_within(1).of(Time.now.utc.to_i)
     end
   end
 end # Nanite::LocalState
