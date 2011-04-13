@@ -1,6 +1,6 @@
 require 'rubygems'
 require 'rake/gempackagetask'
-require "spec/rake/spectask"
+require "rspec/core/rake_task"
 begin; require 'rubygems'; rescue LoadError; end
 begin
   require 'hanna/rdoctask'
@@ -52,9 +52,9 @@ task :install => [:package] do
 end
 
 desc "Run unit specs"
-Spec::Rake::SpecTask.new do |t|
-  t.spec_opts = ["--format", "specdoc", "--colour"]
-  t.spec_files = FileList["spec/**/*_spec.rb"]
+RSpec::Core::RakeTask.new do |t|
+  t.rspec_opts = ["--format", "specdoc", "--colour"]
+  t.pattern    = "spec/**/*_spec.rb"
 end
 
 desc 'Generate RDoc documentation'
