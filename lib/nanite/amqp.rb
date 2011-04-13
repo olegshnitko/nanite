@@ -1,4 +1,4 @@
-class MQ
+module AMQP
   class Queue
     
     # Monkey patch to add :no_declare => true for new queue objects. See the
@@ -6,11 +6,12 @@ class MQ
     def initialize(mq, name, opts = {})
       @mq = mq
       @opts = opts
+      @name = name unless name.empty?
       @bindings ||= {}
-      @mq.queues << self if @mq.queues.empty?
+#      @mq.queues << self if @mq.queues.empty?
       @mq.callback{
-      @mq.send Protocol::Queue::Declare.new({ :queue => name,
-                                              :nowait => true }.merge(opts))
+        @mq.send Protocol::Queue::Declare.new({ :queue => name,
+                                                :nowait => true }.merge(opts))
       } unless opts[:no_declare]
     end
     # Asks the broker to redeliver all unacknowledged messages on a
@@ -21,9 +22,9 @@ class MQ
     # If this flag is true, the server will attempt to requeue the message, potentially then
     # delivering it to an alternative subscriber.
     #
-    def recover(requeue = false)
+    def recover(requeue = false )
       @mq.callback{
-        @mq.send Protocol::Basic::Recover.new({ :requeue => requeue })
+        @mq.send Protocol::Basic::Recover.new(:requeue => requeue)
       }
       self
     end
@@ -31,25 +32,6 @@ class MQ
   
   def close_connection
     @connection.close
-  end
-end
-
-# monkey patch to the amqp gem that adds :no_declare => true option for new 
-# Exchange objects. This allows us to send messeages to exchanges that are
-# declared by the mappers and that we have no configuration priviledges on.
-# temporary until we get this into amqp proper
-AMQP::Exchange.class_eval do
-  def initialize(mq, type, name, opts = {})
-    @mq = mq
-    @type, @name, @opts = type, name, opts
-    @mq.exchanges[@name = name] ||= self
-    @key = opts[:key]
-
-    @mq.callback{
-      @mq.send AMQP::Protocol::Exchange::Declare.new({ :exchange => name,
-                                                 :type => type,
-                                                 :nowait => true }.merge(opts))
-    } unless name == "amq.#{type}" or name == ''  or opts[:no_declare]
   end
 end
 
