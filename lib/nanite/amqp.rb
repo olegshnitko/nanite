@@ -43,7 +43,7 @@ module Nanite
         :pass => options[:pass],
         :vhost => options[:vhost],
         :host => options[:host],
-        :port => (options[:port] || ::AMQP::PORT).to_i,
+        :port => (options[:port] || ::AMQP::Client::AMQP_PORTS["amqp"]).to_i,
         :insist => options[:insist] || false,
         :retry => options[:retry] || 5,
         :connection_status => options[:connection_callback] || proc {|event| 
