@@ -1,5 +1,6 @@
 require 'rubygems'
-require 'rake/gempackagetask'
+#require 'rake/gempackagetask'
+require 'rubygems/package_task'
 require "rspec/core/rake_task"
 begin; require 'rubygems'; rescue LoadError; end
 begin
@@ -8,7 +9,7 @@ rescue LoadError
   require 'rake/rdoctask'
 end
 require 'rake/clean'
-require 'lib/nanite'
+require './lib/nanite'
 
 GEM = "nanite"
 AUTHOR = "Ezra Zygmuntowicz"
@@ -34,14 +35,14 @@ spec = Gem::Specification.new do |s|
   s.bindir       = "bin"
   s.executables  = %w( nanite-agent nanite-mapper nanite-admin )
 
-  s.add_dependency('amqp', '>= 0.6.0')
+  s.add_dependency('amqp', '>= 0.8.0.rc12')
   s.add_dependency('json', '>= 1.1.7')
 
   s.require_path = 'lib'
   s.files = %w(LICENSE README.rdoc Rakefile TODO) + Dir.glob("{lib,bin,specs}/**/*")
 end
 
-Rake::GemPackageTask.new(spec) do |pkg|
+Gem::PackageTask.new(spec) do |pkg|
   pkg.gem_spec = spec
 end
 
