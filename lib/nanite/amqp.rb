@@ -23,10 +23,10 @@ module AMQP
     # delivering it to an alternative subscriber.
     #
     def recover(requeue = false )
-      @mq.callback{
-        @mq.send Protocol::Basic::Recover.new(:requeue => requeue)
-      }
-      self
+      # @mq.callback{
+      #         @mq.send Protocol::Basic::Recover.new(:requeue => requeue)
+      #       }
+      #       self
     end
   end
   
