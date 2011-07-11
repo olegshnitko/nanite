@@ -68,7 +68,8 @@ module Nanite
       @evmclass.defer(lambda {
         [deliverable.reply_to, IntermediateMessage.new(deliverable.token, deliverable.reply_to, identity, messagekey, message)]
       }, lambda { |r|
-        amq.queue(r.first, :no_declare => options[:secure]).publish(serializer.dump(r.last))
+        # we must access queue with the same params we used to declare it in lib/nanite/mapper.rb
+        amq.queue(r.first, :no_declare => options[:secure], :durable => true, :exclusive => false).publish(serializer.dump(r.last))
       })
     end
 

@@ -1,37 +1,38 @@
 module AMQP
+  # Monkey-patch to strip opts[:no_declare] after the Exchange has been created.
+  # If we don't do it, we will encounter an error that the exchange has already
+  # been created with different options (the only difference being the presence
+  # of :no_exchange).
+  class Exchange < AMQ::Client::Exchange
+    alias :orig_initialize :initialize
+    def initialize(channel, type, name, opts = {}, &block)
+      orig_initialize(channel, type, name, opts, &block)
+      @opts.delete(:no_declare)
+    end
+  end
+
   class Queue
+
+    alias :orig_initialize :initialize
+    def initialize(channel, name = AMQ::Protocol::EMPTY_STRING, opts = {}, &block)
+      opts.delete(:no_declare)
+      orig_initialize(channel, name, opts, &block)
+    end
     
-    # Monkey patch to add :no_declare => true for new queue objects. See the
-    # explanation for MQ::Exchange#initialize below.
-    # def initialize(mq, name, opts = {})
-    #       @mq = mq
-    #       @opts = opts
-    #       @name = name unless name.empty?
-    #       @bindings ||= {}
-    # #      @mq.queues << self if @mq.queues.empty?
-    #       @mq.callback{
-    #         @mq.send Protocol::Queue::Declare.new({ :queue => name,
-    #                                                 :nowait => true }.merge(opts))
-    #       } unless opts[:no_declare]
-    #     end
     # Asks the broker to redeliver all unacknowledged messages on a
-    # specifieid channel. Zero or more messages may be redelivered.
+    # specified channel. Zero or more messages may be redelivered.
     #
     # * requeue (default false)
     # If this parameter is false, the message will be redelivered to the original recipient.
     # If this flag is true, the server will attempt to requeue the message, potentially then
     # delivering it to an alternative subscriber.
     #
-    def recover(requeue = false )
-      # @mq.callback{
-      #         @mq.send Protocol::Basic::Recover.new(:requeue => requeue)
-      #       }
-      #       self
+    def recover(requeue = false)
+      channel.once_open{
+        channel.recover(true) # rabbitmq (as of 2.5.1) does not support requeue = false yet.
+      }
+      self
     end
-  end
-  
-  def close_connection
-    @connection.close
   end
 end
 
@@ -51,7 +52,7 @@ module Nanite
           Nanite::Log.debug("Disconnected from MQ") if event == :disconnected
         }
       })
-      MQ.new(connection)
+      MQ.new(connection) # ideally AMQP::Channel.new(...) but MQ used in specs
     end
   end
 end
