@@ -54,7 +54,7 @@ end
 
 desc "Run unit specs"
 RSpec::Core::RakeTask.new do |t|
-  t.rspec_opts = ["--format", "specdoc", "--colour"]
+  t.rspec_opts = ["--format", "documentation", "--colour"]
   t.pattern    = "spec/**/*_spec.rb"
 end
 

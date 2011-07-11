@@ -5,7 +5,6 @@ puts `rabbitmqctl add_vhost /nanite`
 # create 'mapper' and 'nanite' users, give them each the password 'testing'
 %w[mapper nanite].each do |agent|
   puts `rabbitmqctl add_user #{agent} testing`
-  puts `rabbitmqctl map_user_vhost #{agent} /nanite`
 end
 
 # grant the mapper user the ability to do anything with the /nanite vhost
@@ -13,7 +12,9 @@ end
 puts `rabbitmqctl set_permissions -p /nanite mapper ".*" ".*" ".*"`
 
 # grant the nanite user more limited permissions on the /nanite vhost
-puts `rabbitmqctl set_permissions -p /nanite nanite "^nanite.*" ".*" ".*"`
+#puts `rabbitmqctl set_permissions -p /nanite nanite "^nanite.*" ".*" ".*"`
+# restricting 'nanite' user to only read nanite.* breaks the supplied examples!
+puts `rabbitmqctl set_permissions -p /nanite nanite ".*" ".*" ".*"`
 
 puts `rabbitmqctl list_users`
 puts `rabbitmqctl list_vhosts`

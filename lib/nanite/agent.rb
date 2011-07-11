@@ -133,17 +133,18 @@ module Nanite
     def unsubscribe
       heartbeat.cancel
       amqp.queue('heartbeat').unsubscribe
-      amqp.queue(identity).unsubscribe
+      amqp.queue(identity, :durable => true).unsubscribe
     end
     
     def disconnect
-      amqp.close_connection
-      @mapper_proxy.amqp.close_connection
+      amqp.connection.close
+      @mapper_proxy.amqp.close
     end
     
     def un_register
       Nanite::Log.info("SEND [un_register]")
       amqp.fanout('registration', :durable => true, :no_declare => options[:secure]).publish(serializer.dump(UnRegister.new(identity)))
+      amqp.queue(identity, :durable => true).delete
     end
 
     def cleanup
