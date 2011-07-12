@@ -125,7 +125,7 @@ module Nanite
     # forward response back to agent that originally made the request
     def forward_response(res, persistent)
       Nanite::Log.debug("SEND #{res.to_s([:to])}")
-      amq.queue(res.to).publish(serializer.dump(res), :persistent => persistent)
+      amq.queue(res.to, :durable => true).publish(serializer.dump(res), :persistent => persistent)
     end
     
     # returns least loaded nanite that provides given service
